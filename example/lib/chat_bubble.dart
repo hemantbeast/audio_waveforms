@@ -28,9 +28,8 @@ class ChatBubble extends StatelessWidget {
             children: [
               if (isSender) const Spacer(),
               Container(
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    color: isSender ? const Color(0xFF276bfd) : const Color(0xFF343145)),
+                decoration:
+                    BoxDecoration(borderRadius: BorderRadius.circular(10), color: isSender ? const Color(0xFF276bfd) : const Color(0xFF343145)),
                 padding: const EdgeInsets.only(bottom: 9, top: 8, left: 14, right: 12),
                 child: Text(
                   text,
@@ -141,10 +140,8 @@ class _WaveBubbleState extends State<WaveBubble> {
                   if (!controller.playerState.isStopped)
                     IconButton(
                       onPressed: () async {
-                        controller.playerState.isPlaying
-                            ? await controller.pausePlayer()
-                            : await controller.startPlayer();
-                        controller.setReleaseMode(FinishMode.loop);
+                        controller.playerState.isPlaying ? await controller.pausePlayer() : await controller.startPlayer();
+                        controller.setReleaseMode(FinishMode.pause);
                       },
                       icon: Icon(
                         controller.playerState.isPlaying ? Icons.stop : Icons.play_arrow,

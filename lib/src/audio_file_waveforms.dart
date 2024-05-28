@@ -159,8 +159,7 @@ class _AudioFileWaveformsState extends State<AudioFileWaveforms> with SingleTick
       if (!widget.continuousWaveform) {
         widget.playerController.addListener(_addWaveformDataFromController);
       } else {
-        onCurrentExtractedWaveformData =
-            widget.playerController.onCurrentExtractedWaveformData.listen(_addWaveformData);
+        onCurrentExtractedWaveformData = widget.playerController.onCurrentExtractedWaveformData.listen(_addWaveformData);
       }
     }
   }
@@ -262,12 +261,11 @@ class _AudioFileWaveformsState extends State<AudioFileWaveforms> with SingleTick
     if (mounted) setState(() {});
 
     if (widget.waveformType.isLong) {
-      widget.playerController.seekTo((widget.playerController.maxDuration * _proportion).toInt(),
-          whenPlayingOnly: !widget.pauseOnSeekGesture);
+      widget.playerController.seekTo((widget.playerController.maxDuration * _proportion).toInt(), whenPlayingOnly: !widget.pauseOnSeekGesture);
     }
 
     if (widget.playAfterSeekGesture && widget.playerController.playerState != PlayerState.playing) {
-      widget.playerController.startPlayer(finishMode: FinishMode.pause, forceRefresh: false);
+      widget.playerController.startPlayer(forceRefresh: false);
     }
   }
 
@@ -305,7 +303,7 @@ class _AudioFileWaveformsState extends State<AudioFileWaveforms> with SingleTick
     var seekPosition = widget.playerController.maxDuration * _proportion;
 
     //Manage pause mode gesture
-    if(widget.enableSeekGestureOnPauseMode){
+    if (widget.enableSeekGestureOnPauseMode) {
       _manageGestureOnPauseMode(seekPosition);
     }
 
@@ -318,7 +316,7 @@ class _AudioFileWaveformsState extends State<AudioFileWaveforms> with SingleTick
     var seekPosition = widget.playerController.maxDuration * _proportion;
 
     //Manage pause mode gesture
-    if(widget.enableSeekGestureOnPauseMode){
+    if (widget.enableSeekGestureOnPauseMode) {
       _seekProgress.value = seekPosition.toInt();
       _updatePlayerPercent(widget.size);
     }
@@ -337,17 +335,13 @@ class _AudioFileWaveformsState extends State<AudioFileWaveforms> with SingleTick
     scrollScale = widget.playerWaveStyle.scrollScale;
 
     // left to right
-    if (-_totalBackDistance.dx + _dragOffset.dx + details.delta.dx + (widget.playerWaveStyle.spacing) <
-            widget.playerWaveStyle.spacing / 2 &&
+    if (-_totalBackDistance.dx + _dragOffset.dx + details.delta.dx + (widget.playerWaveStyle.spacing) < widget.playerWaveStyle.spacing / 2 &&
         _scrollDirection > 0) {
       _dragOffset += details.delta;
     }
 
     // right to left
-    else if (-_totalBackDistance.dx +
-                _dragOffset.dx +
-                (widget.playerWaveStyle.spacing * _waveformData.length) +
-                details.delta.dx >
+    else if (-_totalBackDistance.dx + _dragOffset.dx + (widget.playerWaveStyle.spacing * _waveformData.length) + details.delta.dx >
             -widget.playerWaveStyle.spacing / 2 &&
         _scrollDirection < 0) {
       _dragOffset += details.delta;
@@ -363,7 +357,7 @@ class _AudioFileWaveformsState extends State<AudioFileWaveforms> with SingleTick
     }
 
     //Manage pause mode gesture
-    if(widget.enableSeekGestureOnPauseMode){
+    if (widget.enableSeekGestureOnPauseMode) {
       var seekPosition = widget.playerController.maxDuration * _proportion;
       _seekProgress.value = seekPosition.toInt();
       _manageGestureOnPauseMode(seekPosition);
@@ -403,11 +397,8 @@ class _AudioFileWaveformsState extends State<AudioFileWaveforms> with SingleTick
   ///This will also handle refreshing the wave after scrolled
   void _pushBackWave() {
     if (!_isScrolled && widget.waveformType.isLong) {
-      _totalBackDistance = Offset(
-          (widget.playerWaveStyle.spacing * _audioProgress * _waveformData.length) +
-              widget.playerWaveStyle.spacing +
-              _dragOffset.dx,
-          0.0);
+      _totalBackDistance =
+          Offset((widget.playerWaveStyle.spacing * _audioProgress * _waveformData.length) + widget.playerWaveStyle.spacing + _dragOffset.dx, 0.0);
     }
     if (widget.playerController.shouldClearLabels) {
       _initialDragPosition = 0.0;

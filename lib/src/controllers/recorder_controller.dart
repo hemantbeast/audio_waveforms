@@ -112,8 +112,7 @@ class RecorderController extends ChangeNotifier {
 
   final ValueNotifier<int> _currentScrolledDuration = ValueNotifier(0);
 
-  final StreamController<Duration> _currentDurationController =
-      StreamController.broadcast();
+  final StreamController<Duration> _currentDurationController = StreamController.broadcast();
 
   /// A stream to get current duration of currently recording audio file.
   /// Events are emitted every 50 milliseconds which means current duration is
@@ -121,22 +120,18 @@ class RecorderController extends ChangeNotifier {
   /// [recordedDuration] after stopping the recording.
   Stream<Duration> get onCurrentDuration => _currentDurationController.stream;
 
-  final StreamController<RecorderState> _recorderStateController =
-      StreamController.broadcast();
+  final StreamController<RecorderState> _recorderStateController = StreamController.broadcast();
 
-  final StreamController<Duration> _recordedFileDurationController =
-      StreamController.broadcast();
+  final StreamController<Duration> _recordedFileDurationController = StreamController.broadcast();
 
   /// A Stream to monitor change in RecorderState. Events are emitted whenever
   /// there is change in the RecorderState.
-  Stream<RecorderState> get onRecorderStateChanged =>
-      _recorderStateController.stream;
+  Stream<RecorderState> get onRecorderStateChanged => _recorderStateController.stream;
 
   /// A stream to get duration of recording when audio recorder has
   /// been stopped. Events are only emitted if platform could extract the
   /// duration of audio file when recording is ended.
-  Stream<Duration> get onRecordingEnded =>
-      _recordedFileDurationController.stream;
+  Stream<Duration> get onRecordingEnded => _recordedFileDurationController.stream;
 
   /// A class having controls for recording audio and other useful handlers.
   ///
@@ -218,9 +213,7 @@ class RecorderController extends ChangeNotifier {
         }
         if (_recorderState.isInitialized) {
           _isRecording = await AudioWaveformsInterface.instance.record(
-            audioFormat: Platform.isIOS
-                ? iosEncoder?.index ?? this.iosEncoder.index
-                : androidEncoder?.index ?? this.androidEncoder.index,
+            audioFormat: Platform.isIOS ? iosEncoder?.index ?? this.iosEncoder.index : androidEncoder?.index ?? this.androidEncoder.index,
             sampleRate: sampleRate ?? this.sampleRate,
             bitRate: bitRate ?? this.bitRate,
             path: path,
@@ -253,8 +246,7 @@ class RecorderController extends ChangeNotifier {
     final initialized = await AudioWaveformsInterface.instance.initRecorder(
       path: path,
       encoder: androidEncoder?.index ?? this.androidEncoder.index,
-      outputFormat:
-          androidOutputFormat?.index ?? this.androidOutputFormat.index,
+      outputFormat: androidOutputFormat?.index ?? this.androidOutputFormat.index,
       sampleRate: sampleRate ?? this.sampleRate,
       bitRate: bitRate ?? this.bitRate,
     );
@@ -311,18 +303,23 @@ class RecorderController extends ChangeNotifier {
   Future<String?> stop([bool callReset = true]) async {
     if (_recorderState.isRecording || _recorderState.isPaused) {
       final audioInfo = await AudioWaveformsInterface.instance.stop();
+
       _isRecording = false;
       _timer?.cancel();
       _recorderTimer?.cancel();
+
       if (audioInfo[Constants.resultDuration] != null) {
-        var duration = int.tryParse(Constants.resultDuration);
+        var duration = double.tryParse(audioInfo[Constants.resultDuration]);
+
         if (duration != null) {
-          recordedDuration = Duration(milliseconds: duration);
+          _recordedDuration = Duration(milliseconds: duration.toInt());
           _recordedFileDurationController.add(recordedDuration);
         }
       }
-      elapsedDuration = Duration.zero;
+
+      _elapsedDuration = Duration.zero;
       _setRecorderState(RecorderState.stopped);
+
       if (callReset) reset();
       return audioInfo[Constants.resultFilePath];
     }
@@ -349,8 +346,7 @@ class RecorderController extends ChangeNotifier {
   }
 
   /// Gets decibels from native
-  Future<double?> _getDecibel() async =>
-      await AudioWaveformsInterface.instance.getDecibel();
+  Future<double?> _getDecibel() async => await AudioWaveformsInterface.instance.getDecibel();
 
   /// Gets decibel by every defined frequency
   void _startTimer() {
@@ -404,8 +400,7 @@ class RecorderController extends ChangeNotifier {
     // calculates min value
     _currentMin = _waveData.fold(
       0,
-      (previousValue, element) =>
-          element < previousValue ? element : previousValue,
+      (previousValue, element) => element < previousValue ? element : previousValue,
     );
 
     final scaledWave = (absDb - _currentMin) / (_maxPeak - _currentMin);
