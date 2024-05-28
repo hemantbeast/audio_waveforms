@@ -257,7 +257,7 @@ class PlayerController extends ChangeNotifier {
     if (progress < 0) return;
 
     // if whenPlayingOnly set to false - the progress will change in any state of the player (made with respect to backward compatibility)
-    if (whenPlayingOnly == false || _playerState == PlayerState.playing) {
+    if (whenPlayingOnly == false || _playerState == PlayerState.playing || _playerState == PlayerState.paused || _playerState == PlayerState.initialized) {
       await AudioWaveformsInterface.instance.seekTo(playerKey, progress);
     }
   }

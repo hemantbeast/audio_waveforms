@@ -69,6 +69,9 @@ class AudioFileWaveforms extends StatefulWidget {
   /// Good to use with [pauseOnSeekGesture]
   final bool playAfterSeekGesture;
 
+  /// Allow seeking with gestures on pause mode.
+  final bool enableSeekGestureOnPauseMode;
+
   /// Generate waveforms from audio file. You play those audio file using
   /// [PlayerController].
   ///
@@ -95,6 +98,7 @@ class AudioFileWaveforms extends StatefulWidget {
     this.enableSeekGesture = true,
     this.pauseOnSeekGesture = false,
     this.playAfterSeekGesture = false,
+    this.enableSeekGestureOnPauseMode = true,
   }) : super(key: key);
 
   @override
@@ -300,6 +304,11 @@ class _AudioFileWaveformsState extends State<AudioFileWaveforms> with SingleTick
     _proportion = details.localPosition.dx / widget.size.width;
     var seekPosition = widget.playerController.maxDuration * _proportion;
 
+    //Manage pause mode gesture
+    if(widget.enableSeekGestureOnPauseMode){
+      _manageGestureOnPauseMode(seekPosition);
+    }
+
     widget.playerController.seekTo(seekPosition.toInt(), whenPlayingOnly: !widget.pauseOnSeekGesture);
   }
 
@@ -307,6 +316,12 @@ class _AudioFileWaveformsState extends State<AudioFileWaveforms> with SingleTick
   void _handleScrubberSeekStart(TapUpDetails details) {
     _proportion = details.localPosition.dx / widget.size.width;
     var seekPosition = widget.playerController.maxDuration * _proportion;
+
+    //Manage pause mode gesture
+    if(widget.enableSeekGestureOnPauseMode){
+      _seekProgress.value = seekPosition.toInt();
+      _updatePlayerPercent(widget.size);
+    }
 
     widget.playerController.seekTo(seekPosition.toInt(), whenPlayingOnly: !widget.pauseOnSeekGesture);
   }
@@ -345,6 +360,13 @@ class _AudioFileWaveformsState extends State<AudioFileWaveforms> with SingleTick
       _proportion = (start.abs() + details.delta.dx) / (_waveformData.length * widget.playerWaveStyle.spacing);
     } else {
       _proportion = (details.delta.dx - start) / (_waveformData.length * widget.playerWaveStyle.spacing);
+    }
+
+    //Manage pause mode gesture
+    if(widget.enableSeekGestureOnPauseMode){
+      var seekPosition = widget.playerController.maxDuration * _proportion;
+      _seekProgress.value = seekPosition.toInt();
+      _manageGestureOnPauseMode(seekPosition);
     }
     if (mounted) setState(() {});
   }
@@ -398,5 +420,10 @@ class _AudioFileWaveformsState extends State<AudioFileWaveforms> with SingleTick
         setState(() {});
       }
     });
+  }
+
+  void _manageGestureOnPauseMode(double seekPosition) {
+    _seekProgress.value = seekPosition.toInt();
+    _updatePlayerPercent(widget.size);
   }
 }
