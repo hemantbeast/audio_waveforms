@@ -3,6 +3,10 @@
 - **Breaking** Dropped support for Flutter < 3.0.0
 - Fixed [#256](https://github.com/SimformSolutionsPvtLtd/audio_waveforms/issues/256) - Default audio session config causing expected behavior for IOS.
 
+## 1.0.6
+- upgrade Flutter version
+- minor internal restructure
+
 ## 1.0.5
 
 - Updated gradle file
