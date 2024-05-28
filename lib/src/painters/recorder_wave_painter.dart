@@ -50,6 +50,7 @@ class RecorderWavePainter extends CustomPainter {
   final bool shouldCalculateScrolledPosition;
   final double scaleFactor;
   final Duration currentlyRecordedDuration;
+  final RRect? clipRRect;
 
   RecorderWavePainter({
     required this.waveData,
@@ -84,6 +85,7 @@ class RecorderWavePainter extends CustomPainter {
     required this.shouldCalculateScrolledPosition,
     required this.scaleFactor,
     required this.currentlyRecordedDuration,
+    this.clipRRect,
   })  : _wavePaint = Paint()
           ..color = waveColor
           ..strokeWidth = waveThickness
@@ -106,6 +108,11 @@ class RecorderWavePainter extends CustomPainter {
       pushBack();
       revertClearLabelCall();
     }
+
+    if (clipRRect != null) {
+      canvas.clipRRect(clipRRect!);
+    }
+
     for (var i = 0; i < waveData.length; i++) {
       ///wave gradient
       if (gradient != null) _waveGradient();
