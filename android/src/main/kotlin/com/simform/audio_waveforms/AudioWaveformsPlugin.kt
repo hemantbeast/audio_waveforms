@@ -200,7 +200,11 @@ class AudioWaveformsPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
         bitRate: Int?
     ) {
         try {
-            recorder = MediaRecorder()
+            recorder = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                MediaRecorder(applicationContext)
+            } else {
+                MediaRecorder()
+            }
         } catch (e: Exception) {
             Log.e(Constants.LOG_TAG, "Failed to initialise Recorder")
         }
